@@ -1,10 +1,10 @@
 FROM nginx:alpine
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /usr/src/jobsheet
 
 RUN rm -rf ./*
 
-COPY build/ /usr/share/nginx/html/
+COPY build/ /usr/src/jobsheet/
 
 EXPOSE 80
 
