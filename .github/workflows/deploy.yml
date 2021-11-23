@@ -16,16 +16,16 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v2
       
-      # - name: 'Login to Dockerhub'
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: 'Login to Dockerhub'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: 'Build and push'
-      #   run: |
-      #     docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/crud-pelanggan-php .
-      #     docker push ${{ secrets.DOCKERHUB_USERNAME}}/crud-pelanggan-php
+      - name: 'Build and push'
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/crud-pelanggan-php2 .
+          docker push ${{ secrets.DOCKERHUB_USERNAME}}/crud-pelanggan-php2
 
       - name: 'Write config'
         run: |
@@ -58,7 +58,7 @@ jobs:
             oci compute instance list \
             --lifecycle-state RUNNING \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
-            --display-name cicd-demo \
+            --display-name cicd-crud-pelanggan \
             --query "data [0].id" \
             --raw-output \
             )" >> $GITHUB_ENV
@@ -73,7 +73,7 @@ jobs:
             --shape ${{secrets.VM_SHAPE}} \
             --shape-config '{"memoryInGBs": 1, "ocpus": 1}' \
             --assign-public-ip true \
-            --display-name cicd-demo \
+            --display-name cicd-crud-pelanggan \
             --image-id ${{secrets.VM_CUSTOM_IMAGE_OCID}} \
             --ssh-authorized-keys-file /home/runner/.oci/oci_api_key_public.pem \
             --subnet-id ${{secrets.VM_SUBNET_OCID}} \
@@ -97,27 +97,27 @@ jobs:
           echo "SSH not available..."
           done; echo "SSH ready!"
 
-      # - name: 'Deploy Deployment Configuration'
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ env.INSTANCE_IP }}
-      #     username: opc
-      #     key: ${{ secrets.OCI_KEY_FILE }}
-      #     source: "docker-compose.yml"
-      #     target: "./"
+      - name: 'Deploy Deployment Configuration'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ env.INSTANCE_IP }}
+          username: opc
+          key: ${{ secrets.OCI_KEY_FILE }}
+          source: "docker-compose.yml"
+          target: "./"
 
-      # - name: 'Running Docker Compose'
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{env.INSTANCE_IP}}
-      #     username: opc
-      #     key: ${{secrets.OCI_KEY_FILE}}
-      #     script: |
-      #       sudo yum install -y yum-utils
-      #       sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-      #       sudo yum install -y docker-ce docker-ce-cli containerd.io
-      #       sudo systemctl restart docker
-      #       sudo firewall-cmd --zone=docker --add-service=http --permanent
-      #       sudo firewall-cmd --reload
-      #       sudo pip3 install docker-compose
-      #       sudo /usr/local/bin/docker-compose up -d
+      - name: 'Running Docker Compose'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{env.INSTANCE_IP}}
+          username: opc
+          key: ${{secrets.OCI_KEY_FILE}}
+          script: |
+            sudo yum install -y yum-utils
+            sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+            sudo yum install -y docker-ce docker-ce-cli containerd.io
+            sudo systemctl restart docker
+            sudo firewall-cmd --zone=docker --add-service=http --permanent
+            sudo firewall-cmd --reload
+            sudo pip3 install docker-compose
+            sudo /usr/local/bin/docker-compose up -d
