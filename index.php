@@ -13,7 +13,7 @@ if(isset($_POST['submit'])){
   }else{
     $_SESSION['data_pelanggan'][] = $data;
   }
-  header("location: ./crud.php");
+  header("location: ./index.php");
 }
 if($_SESSION['data_pelanggan']){ ?>
   <a href='?act=add'>Tambah[+]</a><br>
@@ -31,8 +31,8 @@ if($_SESSION['data_pelanggan']){ ?>
       <td><?php echo $value['nama_pelanggan'];?></td>
       <td><?php echo $value['nohp_pelanggan'];?></td>
       <td><?php echo $value['alamat_pelanggan'];?></td>
-      <td><button type="button" onclick="window.location='crud.php?act=delete&id=<?php echo $key;?>'">Hapus</button></td>
-      <td><button type="button" onclick="window.location='crud.php?act=edit&id=<?php echo $key;?>'">Edit</button></td>
+      <td><button type="button" onclick="window.location='index.php?act=delete&id=<?php echo $key;?>'">Hapus</button></td>
+      <td><button type="button" onclick="window.location='index.php?act=edit&id=<?php echo $key;?>'">Edit</button></td>
     </tr>
   <?php } ?>
   </table>
@@ -51,14 +51,14 @@ switch($_GET['act']){
   case "delete":
     $id = $_GET['id'];
     unset($_SESSION['data_pelanggan'][$id]);
-    header("location: ./crud.php");
+    header("location: ./index.php");
     break;
   case "update":
     $id = $_GET['id'];
     $_SESSION['data_pelanggan'][$id]['nama_pelanggan'] = $_POST['nama_pelanggan'];
     $_SESSION['data_pelanggan'][$id]['nohp_pelanggan'] = $_POST['nohp_pelanggan'];
     $_SESSION['data_pelanggan'][$id]['alamat_pelanggan'] = $_POST['alamat_pelanggan'];
-    header("location: ./crud.php");
+    header("location: ./index.php");
     break;
   case "edit":
     $id = $_GET['id'];
