@@ -4,7 +4,7 @@ WORKDIR /usr/src/jobsheet
 
 RUN rm -rf ./*
 
-COPY build/ /usr/src/jobsheet/
+COPY . ./usr/src/jobsheet/
 
 EXPOSE 80
 
